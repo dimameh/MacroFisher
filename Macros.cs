@@ -7,11 +7,11 @@ namespace MacroFisher
 	{
 		#region Nested class
 
-		private class MacrosKey
+		private class Command
 		{
 			#region Constants
 
-			private const int microConvert = 1000;
+			private const int _microConvert = 1000;
 
 			#endregion
 
@@ -39,7 +39,7 @@ namespace MacroFisher
 							"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 					}
 
-					_secondsPressed = value * microConvert;
+					_secondsPressed = value * _microConvert;
 				}
 			}
 
@@ -54,7 +54,7 @@ namespace MacroFisher
 							"Слишком долгое время нажатия. Максимальная длина нажатия: 86400 секунд (24 часа).");
 					}
 
-					_secondsPauseAfter = value * microConvert;
+					_secondsPauseAfter = value * _microConvert;
 				}
 			}
 
@@ -69,7 +69,7 @@ namespace MacroFisher
 			/// <param name="pressed">Сколько секунд нажимать на него</param>
 			/// <param name="paused">Сколько секунд после этого ничего не делать</param>
 			/// <param name="id">ID макроса в списке для поиска</param>
-			public MacrosKey(char keyChar, int pressed, int paused, int id)
+			public Command(char keyChar, int pressed, int paused, int id)
 			{
 				Key = keyChar;
 				SecondsPressed = pressed;
@@ -82,9 +82,21 @@ namespace MacroFisher
 
 		#endregion
 
-		#region Private fields
+		#region Readonly fields
 
-		private readonly List<MacrosKey> _macrosList = new List<MacrosKey>();
+		/// <summary>
+		/// Список команд макроса
+		/// </summary>
+		private readonly List<Command> _macrosList = new List<Command>();
+
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// Название макроса
+		/// </summary>
+		public string Name { get; set; }
 
 		#endregion
 
@@ -125,16 +137,16 @@ namespace MacroFisher
 		/// <param name="keyChar">Символ</param>
 		/// <param name="pressed">Сколько секунд нажимать на него</param>
 		/// <param name="paused">Сколько секунд после этого ничего не делать</param>
-		public void AddMacros(char keyChar, int pressed, int paused)
+		public void AddCommand(char keyChar, int pressed, int paused)
 		{
-			_macrosList.Add(new MacrosKey(keyChar, pressed, paused, GenerateId()));
+			_macrosList.Add(new Command(keyChar, pressed, paused, GenerateId()));
 		}
 
 		/// <summary>
-		/// Удалить макрос
+		///     Удалить макрос
 		/// </summary>
 		/// <param name="id">id макроса</param>
-		public void RemoveMacros(int id)
+		public void RemoveCommand(int id)
 		{
 			foreach (var macros in _macrosList)
 			{

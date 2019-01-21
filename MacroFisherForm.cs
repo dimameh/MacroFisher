@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
@@ -43,14 +44,18 @@ namespace MacroFisher
 		const uint KEYEVENTF_KEYUP = 0x0002;
 		#endregion
 
-		//TODO: Добавить галочку при добавлении макрокнопки использовать рандом или нет.
+		private List<Macros> _macrosList;
+
+		#region Инициализация
 
 		public MacroFisherForm()
 		{
 			InitializeComponent();
+
+			_macrosList = new List<Macros>();
 		}
 
-		private void Form1_Load(object sender, EventArgs e)
+		private void MacroFisherForm_Load(object sender, EventArgs e)
 		{
 			#region Отслеживание нажатий 2
 
@@ -67,6 +72,9 @@ namespace MacroFisher
 
 			#endregion
 		}
+		#endregion
+
+		//TODO: Добавить галочку при добавлении макрокнопки использовать рандом или нет.
 
 		private void StartButton_Click(object sender, EventArgs e)
 		{
@@ -75,14 +83,14 @@ namespace MacroFisher
 			//https://docs.microsoft.com/ru-ru/windows/desktop/inputdev/virtual-key-codes
 			//SendKeys.Send("");
 
-			MacrosListBox.Items.Add(VkKeyScan('D'));
+			
 			System.Threading.Thread.Sleep(5000);
 			keybd_event((byte)VkKeyScan('D')/*D*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
 			System.Threading.Thread.Sleep(1000);
 			keybd_event((byte)VkKeyScan('D')/*D*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
 
-
-
+			//шпаргалка
+			//keybd_event((byte)VkKeyScan('D')/*D*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
 			//System.Threading.Thread.Sleep(5000);
 			//keybd_event(0x44/*D*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
 			//System.Threading.Thread.Sleep(1000);
