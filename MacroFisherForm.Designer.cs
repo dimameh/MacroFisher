@@ -33,6 +33,8 @@
 			this.MacrosListBox = new System.Windows.Forms.ListBox();
 			this.currentMacrosLabel = new System.Windows.Forms.Label();
 			this.currentMacrosName = new System.Windows.Forms.Label();
+			this.deleteMacrosButton = new System.Windows.Forms.Button();
+			this.pickMacrosErrorLabel = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// StartButton
@@ -47,9 +49,9 @@
 			// 
 			// AddMacroButton
 			// 
-			this.AddMacroButton.Location = new System.Drawing.Point(220, 191);
+			this.AddMacroButton.Location = new System.Drawing.Point(327, 182);
 			this.AddMacroButton.Name = "AddMacroButton";
-			this.AddMacroButton.Size = new System.Drawing.Size(218, 40);
+			this.AddMacroButton.Size = new System.Drawing.Size(111, 49);
 			this.AddMacroButton.TabIndex = 4;
 			this.AddMacroButton.Text = "Добавить макрос";
 			this.AddMacroButton.UseVisualStyleBackColor = true;
@@ -62,6 +64,7 @@
 			this.MacrosListBox.Name = "MacrosListBox";
 			this.MacrosListBox.Size = new System.Drawing.Size(218, 164);
 			this.MacrosListBox.TabIndex = 5;
+			this.MacrosListBox.SelectedIndexChanged += new System.EventHandler(this.MacrosListBox_SelectedIndexChanged);
 			// 
 			// currentMacrosLabel
 			// 
@@ -81,12 +84,36 @@
 			this.currentMacrosName.TabIndex = 7;
 			this.currentMacrosName.Text = "Макрос не выбран";
 			// 
+			// deleteMacrosButton
+			// 
+			this.deleteMacrosButton.Location = new System.Drawing.Point(220, 182);
+			this.deleteMacrosButton.Name = "deleteMacrosButton";
+			this.deleteMacrosButton.Size = new System.Drawing.Size(101, 49);
+			this.deleteMacrosButton.TabIndex = 8;
+			this.deleteMacrosButton.Text = "Удалить макрос";
+			this.deleteMacrosButton.UseVisualStyleBackColor = true;
+			this.deleteMacrosButton.Click += new System.EventHandler(this.deleteMacrosButton_Click);
+			// 
+			// pickMacrosErrorLabel
+			// 
+			this.pickMacrosErrorLabel.AutoSize = true;
+			this.pickMacrosErrorLabel.BackColor = System.Drawing.Color.Transparent;
+			this.pickMacrosErrorLabel.ForeColor = System.Drawing.Color.Red;
+			this.pickMacrosErrorLabel.Location = new System.Drawing.Point(12, 154);
+			this.pickMacrosErrorLabel.Name = "pickMacrosErrorLabel";
+			this.pickMacrosErrorLabel.Size = new System.Drawing.Size(158, 34);
+			this.pickMacrosErrorLabel.TabIndex = 9;
+			this.pickMacrosErrorLabel.Text = "ОЧЕВИДНО, тебе \r\nнужно выбрать макрос";
+			this.pickMacrosErrorLabel.Visible = false;
+			// 
 			// MacroFisherForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::MacroFisher.Properties.Resources.index;
 			this.ClientSize = new System.Drawing.Size(450, 248);
+			this.Controls.Add(this.pickMacrosErrorLabel);
+			this.Controls.Add(this.deleteMacrosButton);
 			this.Controls.Add(this.currentMacrosName);
 			this.Controls.Add(this.currentMacrosLabel);
 			this.Controls.Add(this.MacrosListBox);
@@ -107,6 +134,8 @@
 		private System.Windows.Forms.ListBox MacrosListBox;
 		private System.Windows.Forms.Label currentMacrosLabel;
 		private System.Windows.Forms.Label currentMacrosName;
+		private System.Windows.Forms.Button deleteMacrosButton;
+		private System.Windows.Forms.Label pickMacrosErrorLabel;
 	}
 }
 

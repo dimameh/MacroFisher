@@ -9,7 +9,7 @@ namespace MacroFisher
 		#region Readonly fields
 
 		/// <summary>
-		/// Список команд макроса
+		///     Список команд макроса
 		/// </summary>
 		private readonly List<Command> _macrosList = new List<Command>();
 
@@ -18,9 +18,18 @@ namespace MacroFisher
 		#region Properties
 
 		/// <summary>
-		/// Название макроса
+		///     Название макроса
 		/// </summary>
 		public string Name { get; set; }
+
+		#endregion
+
+		#region Constructor
+
+		public Macros(string name)
+		{
+			Name = name;
+		}
 
 		#endregion
 
@@ -30,7 +39,7 @@ namespace MacroFisher
 		{
 			bool isIdFree;
 
-			for (var i = 0; i < _macrosList.Capacity+1; i++)
+			for (var i = 0; i < _macrosList.Capacity + 1; i++)
 			{
 				isIdFree = true;
 				foreach (var macros in _macrosList)
@@ -62,7 +71,8 @@ namespace MacroFisher
 		/// <param name="secondsPressed">Сколько секунд нажимать на него</param>
 		/// <param name="secondsPaused">Сколько секунд после этого ничего не делать</param>
 		/// <param name="pressType">Тип нажатия (Hold/Press)</param>
-		public void AddCommand(char keyChar, int secondsPressed, int secondsPaused, PressType pressType)
+		public void AddCommand(char keyChar, int secondsPressed, int secondsPaused,
+			PressType pressType)
 		{
 			if (pressType == PressType.Hold)
 			{
@@ -91,14 +101,14 @@ namespace MacroFisher
 			}
 		}
 
-		#endregion
-
 		#region Implementation of IEnumerable
 
 		public IEnumerator GetEnumerator()
 		{
 			return _macrosList.GetEnumerator();
 		}
+
+		#endregion
 
 		#endregion
 	}

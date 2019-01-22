@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MacroFisher
 {
@@ -17,6 +13,7 @@ namespace MacroFisher
 		#region Private fields
 
 		private int _microsecondsPausedAfter;
+
 		private int _microsecondsPressed;
 
 		#endregion
@@ -25,7 +22,7 @@ namespace MacroFisher
 
 		public int Id { get; }
 
-		public char Key { get; private set; }
+		public char Key { get; }
 
 		public int MicrosecondsPressed
 		{

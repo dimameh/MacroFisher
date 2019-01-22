@@ -56,6 +56,23 @@ namespace MacroFisher
 			InitializeComponent();
 
 			_macrosList = new List<Macros>();
+
+			_macrosList.Add(TestMacrosGenerator.GetMacros(1));
+			_macrosList.Add(TestMacrosGenerator.GetMacros(2));
+			_macrosList.Add(TestMacrosGenerator.GetMacros(3));
+
+			if (Properties.Settings.Default.LastMacrosesList != null)
+			{
+				_macrosList.AddRange(Properties.Settings.Default.LastMacrosesList);
+			}
+
+			if (_macrosList.Capacity != 0)
+			{
+				foreach (var macros in _macrosList)
+				{
+					MacrosListBox.Items.Add(macros.Name);
+				}
+			}
 		}
 
 		private void MacroFisherForm_Load(object sender, EventArgs e)
@@ -79,6 +96,9 @@ namespace MacroFisher
 
 		//TODO: Добавить галочку при добавлении макрокнопки использовать рандом или нет.
 
+		/// <summary>
+		/// Начать выполнение выбранного макроса
+		/// </summary>
 		private void StartButton_Click(object sender, EventArgs e)
 		{
 			#region Имитация нажатий через 5 сек
@@ -97,10 +117,12 @@ namespace MacroFisher
 
 			#endregion
 
-			//!
-			_currentMacros = TestMacrosGenerator.GetMacros(3);
-			//!
-
+			if (_currentMacros == null)
+			{
+				pickMacrosErrorLabel.Visible = true;
+				return;
+			}
+			
 			Thread.Sleep(7000);
 
 			foreach (Command command in _currentMacros)
@@ -193,9 +215,60 @@ namespace MacroFisher
 
 		#endregion
 
+		/// <summary>
+		/// Событие закрытия формы
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void MacroFisherForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Properties.Settings.Default.LastMacrosesList = _macrosList;
+			Properties.Settings.Default.Save();
+		}
+
+		/// <summary>
+		/// Событие смены выбора в листбоксе
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void MacrosListBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			foreach (var macros in _macrosList)
+			{
+				if (MacrosListBox.SelectedItem != null)
+				{
+					if (macros.Name == MacrosListBox.SelectedItem.ToString())
+					{
+						_currentMacros = macros;
+						currentMacrosName.Text = macros.Name;
+						pickMacrosErrorLabel.Visible = false;
+						break;
+					}
+				}
+				else
+				{
+					currentMacrosName.Text = "Макрос не выбран";
+				}
+			}
+		}
+
+		/// <summary>
+		/// Удалить макрос
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void deleteMacrosButton_Click(object sender, EventArgs e)
+		{
+			foreach (var macros in _macrosList)
+			{
+				if (macros.Name == MacrosListBox.SelectedItem.ToString())
+				{
+					MacrosListBox.Items.RemoveAt(MacrosListBox.SelectedIndex);
+					_macrosList.Remove(macros);
+					_currentMacros = null;
+					break;
+				}
+			}
 		}
 	}
 }
