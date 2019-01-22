@@ -32,13 +32,6 @@ namespace MacroFisher
 		static extern void keybd_event(byte bVk, byte bScan, uint dwFlags,
 			int dwExtraInfo);
 
-		/// <summary>
-		/// Перевод символа в кейкод
-		/// </summary>
-		/// <param name="ch">символ</param>
-		/// <returns></returns>
-		[DllImport("user32.dll")] static extern short VkKeyScan(char ch);
-
 		//зажать
 		const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
 		//отпустить
@@ -48,6 +41,8 @@ namespace MacroFisher
 		private List<Macros> _macrosList;
 
 		private Macros _currentMacros;
+
+		private MacrosRedactorForm _macrosRedactorForm;
 
 		#region Инициализация
 
@@ -61,11 +56,15 @@ namespace MacroFisher
 			_macrosList.Add(TestMacrosGenerator.GetMacros(2));
 			_macrosList.Add(TestMacrosGenerator.GetMacros(3));
 
-			if (Properties.Settings.Default.LastMacrosesList != null)
-			{
-				_macrosList.AddRange(Properties.Settings.Default.LastMacrosesList);
-			}
+			RefreshListBox();
+		}
 
+		/// <summary>
+		/// Обновить список макросов
+		/// </summary>
+		private void RefreshListBox()
+		{
+			MacrosListBox.Items.Clear();
 			if (_macrosList.Capacity != 0)
 			{
 				foreach (var macros in _macrosList)
@@ -123,23 +122,28 @@ namespace MacroFisher
 				return;
 			}
 			
-			Thread.Sleep(7000);
+			Thread.Sleep(4000);
 
 			foreach (Command command in _currentMacros)
 			{
 				if (command.Type == PressType.Hold)
 				{
-					keybd_event((byte)VkKeyScan(command.Key)/*клавиша*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
+					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
 
 					Thread.Sleep(command.MicrosecondsPressed);
 
-					keybd_event((byte)VkKeyScan(command.Key)/*клавиша*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
+					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
 
 					Thread.Sleep(command.MicrosecondsPausedAfter);
 				}
 				else
 				{
-					SendKeys.Send(command.Key.ToString());
+					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
+
+					Thread.Sleep(0);
+
+					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
+
 					Thread.Sleep(command.MicrosecondsPausedAfter);
 				}
 			}
@@ -222,8 +226,9 @@ namespace MacroFisher
 		/// <param name="e"></param>
 		private void MacroFisherForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			Properties.Settings.Default.LastMacrosesList = _macrosList;
 			Properties.Settings.Default.Save();
+			Properties.Settings.Default.Upgrade();
+			MessageBox.Show("Saved Settings");
 		}
 
 		/// <summary>
@@ -268,6 +273,19 @@ namespace MacroFisher
 					_currentMacros = null;
 					break;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Добавить новый макрос
+		/// </summary>
+		private void AddMacroButton_Click(object sender, EventArgs e)
+		{
+			_macrosRedactorForm = new MacrosRedactorForm();
+			if (_macrosRedactorForm.ShowDialog() == DialogResult.OK)
+			{
+				_macrosList.Add(_macrosRedactorForm.Macros);
+				RefreshListBox();
 			}
 		}
 	}

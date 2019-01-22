@@ -76,14 +76,20 @@ namespace MacroFisher
 		{
 			if (pressType == PressType.Hold)
 			{
-				_macrosList.Add(new Command(keyChar, secondsPressed, secondsPaused,
-					GenerateId(), pressType));
+				_macrosList.Add(new Command(keyChar, secondsPressed, secondsPaused, pressType,
+					GenerateId()));
 			}
 			else
 			{
-				_macrosList.Add(new Command(keyChar, 0, secondsPaused,
-					GenerateId(), pressType));
+				_macrosList.Add(new Command(keyChar, 0, secondsPaused, pressType,
+					GenerateId()));
 			}
+		}
+
+		public void AddCommand(Command command)
+		{
+			command.Id = GenerateId();
+			_macrosList.Add(command);
 		}
 
 		/// <summary>

@@ -22,8 +22,8 @@
 					macros.AddCommand('s', 3, 1, PressType.Press);
 					return macros;
 				case 3:
-					macros.AddCommand('w', 3, 1, PressType.Hold);
-					macros.AddCommand('i', 3, 1, PressType.Press);
+					macros.AddCommand('w', 3, 1, PressType.Press);
+					macros.AddCommand('3', 3, 1, PressType.Press);
 					return macros;
 				default:
 					return macros;

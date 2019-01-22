@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace MacroFisher
 {
@@ -20,9 +21,9 @@ namespace MacroFisher
 
 		#region Properties
 
-		public int Id { get; }
+		public int Id { get; set; }
 
-		public char Key { get; }
+		public byte Key { get; }
 
 		public int MicrosecondsPressed
 		{
@@ -61,13 +62,29 @@ namespace MacroFisher
 		#region Constructor
 
 		/// <summary>
+		/// Перевод символа в кейкод
+		/// </summary>
+		/// <param name="ch">символ</param>
+		/// <returns></returns>
+		[DllImport("user32.dll")] static extern short VkKeyScan(char ch);
+
+		/// <summary>
 		///     Конструктор
 		/// </summary>
 		/// <param name="keyChar">Символ</param>
 		/// <param name="pressed">Сколько секунд нажимать на него</param>
 		/// <param name="paused">Сколько секунд после этого ничего не делать</param>
 		/// <param name="id">ID макроса в списке для поиска</param>
-		public Command(char keyChar, int pressed, int paused, int id, PressType pressType)
+		public Command(char keyChar, int pressed, int paused, PressType pressType, int id = 0)
+		{
+			Key = (byte)VkKeyScan(keyChar);
+			MicrosecondsPressed = pressed;
+			MicrosecondsPausedAfter = paused;
+			Id = id;
+			Type = pressType;
+		}
+
+		public Command(byte keyChar, int pressed, int paused, PressType pressType, int id = 0)
 		{
 			Key = keyChar;
 			MicrosecondsPressed = pressed;
