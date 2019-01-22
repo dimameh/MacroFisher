@@ -46,14 +46,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestMacrosGenerator.cs" />
+    <Compile Include="Tools\Comand.cs" />
+    <Compile Include="LastMacroses.cs" />
     <Compile Include="MacroFisherForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MacroFisherForm.Designer.cs">
       <DependentUpon>MacroFisherForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GlobalKeyboardHook.cs" />
-    <Compile Include="Macros.cs" />
+    <Compile Include="Tools\GlobalKeyboardHook.cs" />
+    <Compile Include="Tools\Macros.cs" />
+    <Compile Include="Tools\PressType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MacroFisherForm.resx">

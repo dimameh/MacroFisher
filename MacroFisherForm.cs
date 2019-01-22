@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -46,6 +47,8 @@ namespace MacroFisher
 
 		private List<Macros> _macrosList;
 
+		private Macros _currentMacros;
+
 		#region Инициализация
 
 		public MacroFisherForm()
@@ -79,16 +82,12 @@ namespace MacroFisher
 		private void StartButton_Click(object sender, EventArgs e)
 		{
 			#region Имитация нажатий через 5 сек
+
+			#region шпаргалка
+
 			//ссылка на коды клавиш
 			//https://docs.microsoft.com/ru-ru/windows/desktop/inputdev/virtual-key-codes
 			//SendKeys.Send("");
-
-			
-			System.Threading.Thread.Sleep(5000);
-			keybd_event((byte)VkKeyScan('D')/*D*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
-			System.Threading.Thread.Sleep(1000);
-			keybd_event((byte)VkKeyScan('D')/*D*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
-
 			//шпаргалка
 			//keybd_event((byte)VkKeyScan('D')/*D*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
 			//System.Threading.Thread.Sleep(5000);
@@ -96,6 +95,33 @@ namespace MacroFisher
 			//System.Threading.Thread.Sleep(1000);
 			//keybd_event(0x44/*D*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
 
+			#endregion
+
+			//!
+			_currentMacros = TestMacrosGenerator.GetMacros(3);
+			//!
+
+			Thread.Sleep(7000);
+
+			foreach (Command command in _currentMacros)
+			{
+				if (command.Type == PressType.Hold)
+				{
+					keybd_event((byte)VkKeyScan(command.Key)/*клавиша*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
+
+					Thread.Sleep(command.MicrosecondsPressed);
+
+					keybd_event((byte)VkKeyScan(command.Key)/*клавиша*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
+
+					Thread.Sleep(command.MicrosecondsPausedAfter);
+				}
+				else
+				{
+					SendKeys.Send(command.Key.ToString());
+					Thread.Sleep(command.MicrosecondsPausedAfter);
+				}
+			}
+			
 			#endregion
 
 			#region Отслеживание нажатий
@@ -166,5 +192,10 @@ namespace MacroFisher
 		//}
 
 		#endregion
+
+		private void MacroFisherForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			Properties.Settings.Default.LastMacrosesList = _macrosList;
+		}
 	}
 }
