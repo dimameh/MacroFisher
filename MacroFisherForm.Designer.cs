@@ -28,6 +28,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MacroFisherForm));
 			this.StartButton = new System.Windows.Forms.Button();
 			this.AddMacroButton = new System.Windows.Forms.Button();
 			this.MacrosListBox = new System.Windows.Forms.ListBox();
@@ -55,6 +56,7 @@
 			this.AddMacroButton.TabIndex = 4;
 			this.AddMacroButton.Text = "Добавить макрос";
 			this.AddMacroButton.UseVisualStyleBackColor = true;
+			this.AddMacroButton.Click += new System.EventHandler(this.AddMacroButton_Click);
 			// 
 			// MacrosListBox
 			// 
@@ -119,6 +121,7 @@
 			this.Controls.Add(this.MacrosListBox);
 			this.Controls.Add(this.AddMacroButton);
 			this.Controls.Add(this.StartButton);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MacroFisherForm";
 			this.Text = "Macro Fisher [0.1]";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MacroFisherForm_FormClosing);

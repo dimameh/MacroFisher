@@ -46,8 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestMacrosGenerator.cs" />
-    <Compile Include="Tools\Comand.cs" />
+    <Compile Include="MacrosRedactorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MacrosRedactorForm.Designer.cs">
+      <DependentUpon>MacrosRedactorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\Serialization.cs" />
+    <Compile Include="Tools\TestMacrosGenerator.cs" />
     <Compile Include="LastMacroses.cs" />
     <Compile Include="MacroFisherForm.cs">
       <SubType>Form</SubType>
@@ -56,10 +62,12 @@
       <DependentUpon>MacroFisherForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\GlobalKeyboardHook.cs" />
-    <Compile Include="Tools\Macros.cs" />
     <Compile Include="Tools\PressType.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="MacrosRedactorForm.resx">
+      <DependentUpon>MacrosRedactorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MacroFisherForm.resx">
       <DependentUpon>MacroFisherForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -88,6 +96,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\index.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\clyster.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Macros\Macros.csproj">
+      <Project>{75B2AB66-281F-424F-8AF5-19D9941EAE23}</Project>
+      <Name>Macros</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
