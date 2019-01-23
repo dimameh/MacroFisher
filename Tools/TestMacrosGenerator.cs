@@ -10,20 +10,20 @@
 			switch (macrosNumber)
 			{
 				case 1:
-					macros.AddCommand('d', 3, 1, 0, 0, 0, 0);
-					macros.AddCommand('a', 3, 1, 0, 0, 0, 0);
-					macros.AddCommand('w', 3, 1, 0, 0, 0, 0);
-					macros.AddCommand('s', 3, 1, 0, 0, 0, 0);
+					macros.AddCommand('d', 3, 1, PressType.Hold);
+					macros.AddCommand('a', 3, 1, PressType.Hold);
+					macros.AddCommand('w', 3, 1, PressType.Hold);
+					macros.AddCommand('s', 3, 1, PressType.Hold);
 					return macros;
 				case 2:
-					macros.AddCommand('d', 3, 1, 1, 2, 1, 1);
-					macros.AddCommand('a', 3, 1, 2, 2, 2, 2);
-					macros.AddCommand('w', 3, 1, 1, 1, 1, 1);
-					macros.AddCommand('s', 3, 1, 1, 5, 1, 5);
+					macros.AddCommand('d', 3, 1, PressType.Press);
+					macros.AddCommand('a', 3, 1, PressType.Press);
+					macros.AddCommand('w', 3, 1, PressType.Press);
+					macros.AddCommand('s', 3, 1, PressType.Press);
 					return macros;
 				case 3:
-					macros.AddCommand('w', 3, 1, 0, 0, 0, 0);
-					macros.AddCommand('3', 3, 1, 0, 0, 0, 0);
+					macros.AddCommand('w', 3, 1, PressType.Press);
+					macros.AddCommand('3', 3, 1, PressType.Press);
 					return macros;
 				default:
 					return macros;
