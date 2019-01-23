@@ -1,8 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-
-namespace MacroFisher
+﻿namespace MacroFisher
 {
 	public static class TestMacrosGenerator
 	{
@@ -11,52 +7,23 @@ namespace MacroFisher
 		public static Macros GetMacros(int macrosNumber)
 		{
 			var macros = new Macros("Test Macros #" + macrosNumber);
-
-			switch
-				(macrosNumber)
+			switch (macrosNumber)
 			{
 				case 1:
-					macros.AddCommand('d', 3, 1, PressType.Hold);
-					macros.AddCommand('a', 3, 1, PressType.Hold);
-					macros.AddCommand('w', 3, 1, PressType.Hold);
-					macros.AddCommand('s', 3, 1, PressType.Hold);
+					macros.AddCommand('d', 3, 1, 0, 0, 0, 0);
+					macros.AddCommand('a', 3, 1, 0, 0, 0, 0);
+					macros.AddCommand('w', 3, 1, 0, 0, 0, 0);
+					macros.AddCommand('s', 3, 1, 0, 0, 0, 0);
 					return macros;
 				case 2:
-					macros.AddCommand('d', 3, 1, PressType.Press);
-					macros.AddCommand('a', 3, 1, PressType.Press);
-					macros.AddCommand('w', 3, 1, PressType.Press);
-					macros.AddCommand('s', 3, 1, PressType.Press);
+					macros.AddCommand('d', 3, 1, 1, 2, 1, 1);
+					macros.AddCommand('a', 3, 1, 2, 2, 2, 2);
+					macros.AddCommand('w', 3, 1, 1, 1, 1, 1);
+					macros.AddCommand('s', 3, 1, 1, 5, 1, 5);
 					return macros;
 				case 3:
-					macros.AddCommand('w', 3, 1, PressType.Press);
-					macros.AddCommand('3', 3, 1, PressType.Press);
-					return macros;
-				case 4:
-
-					macros.AddCommand('p', 0, 4, PressType.Press);
-					macros.AddCommand(' ', 0, 5, PressType.Press);
-
-					char key;
-					switch (1)
-					{
-						case 1:
-							key = 'w';
-							break;
-						case 2:
-							key = 'a';
-							break;
-						case 3:
-							key = 's';
-							break;
-						case 4:
-							key = 'd';
-							break;
-						default:
-							key = 's';
-							break;
-					}
-					macros.AddCommand(key, 5, 5, PressType.Hold);
-
+					macros.AddCommand('w', 3, 1, 0, 0, 0, 0);
+					macros.AddCommand('3', 3, 1, 0, 0, 0, 0);
 					return macros;
 				default:
 					return macros;

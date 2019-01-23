@@ -31,6 +31,16 @@ namespace MacroFisher
 
 		private void addButton_Click(object sender, EventArgs e)
 		{
+			if (keyTextBox.Text == string.Empty ||
+			    pressTimeTextBox.Text == string.Empty ||
+				pauseTimeTextBox.Text == string.Empty ||
+				pressMinTextBox.Text == string.Empty ||
+				pressMaxTextBox.Text == string.Empty ||
+				pauseMinTextBox.Text == string.Empty ||
+				pauseMaxTextBox.Text == string.Empty)
+			{
+				
+			}
 			byte key;
 			keyTextBox.Text = keyTextBox.Text.ToUpper();
 			if (keyTextBox.Text.Length > 1)
@@ -52,22 +62,22 @@ namespace MacroFisher
 
 		private void AddMacroAtGridAndList(string strKey, byte byteKey, int pressTime, int pauseTime)
 		{
-			if (holdRadioButton.Checked)
-			{
-				macrosDataGrid.Rows.Add(strKey, pressTime,
-					pauseTime, "Зажать");
+			//if (holdRadioButton.Checked)
+			//{
+			//	macrosDataGrid.Rows.Add(strKey, pressTime,
+			//		pauseTime, "Зажать");
 
-				Macros.AddCommand(new Command(byteKey, int.Parse(pressTimeTextBox.Text),
-					int.Parse(pauseTimeTextBox.Text), PressType.Hold));
-			}
-			else
-			{
-				macrosDataGrid.Rows.Add(strKey, pressTime,
-					pauseTime, "Тыкнуть");
+			//	Macros.AddCommand(new Command(byteKey, int.Parse(pressTimeTextBox.Text),
+			//		int.Parse(pauseTimeTextBox.Text)));
+			//}
+			//else
+			//{
+			//	macrosDataGrid.Rows.Add(strKey, pressTime,
+			//		pauseTime, "Тыкнуть");
 
-				Macros.AddCommand(new Command(byteKey, int.Parse(pressTimeTextBox.Text),
-					int.Parse(pauseTimeTextBox.Text), PressType.Press));
-			}
+			//	Macros.AddCommand(new Command(byteKey, int.Parse(pressTimeTextBox.Text),
+			//		int.Parse(pauseTimeTextBox.Text)));
+			//}
 		}
 
 		private void pressTimeTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -120,11 +130,6 @@ namespace MacroFisher
 			{
 				MessageBox.Show("Требуется название макроса");
 			}
-		}
-
-		private void macrosDataGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
-		{
-			//macrosDataGrid.
 		}
 	}
 }

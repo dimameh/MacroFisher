@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
-using MacroFisher.Tools;
 
 namespace MacroFisher
 {
 	public partial class MacroFisherForm : Form
 	{
 		#region Отслеживание нажатий 1
+
 		//GlobalKeyboardHook globalKeyboardHookCTRL = new GlobalKeyboardHook();
 		//GlobalKeyboardHook globalKeyboardHookALT = new GlobalKeyboardHook();
 
@@ -19,9 +19,11 @@ namespace MacroFisher
 		//private bool IsAltPressed { get; set; } = false;
 		//private bool IsCtrlPressed { get; set; } = false;
 		//private bool IsActivated { get; set; } = false;
+
 		#endregion
 
 		#region WinAPI
+
 		/// <summary>
 		/// Имитатор зажатия клавиши
 		/// </summary>
@@ -35,14 +37,28 @@ namespace MacroFisher
 
 		//зажать
 		const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
+
 		//отпустить
 		const uint KEYEVENTF_KEYUP = 0x0002;
+
 		#endregion
 
+		/// <summary>
+		/// Список доступных макросов
+		/// </summary>
 		private List<Macros> _macrosList;
 
+		/// <summary>
+		/// Макрос, выбранный в данный момент
+		/// </summary>
 		private Macros _currentMacros;
+
+		/// <summary>
+		/// Форма редактора макросов
+		/// </summary>
 		private MacrosRedactorForm _macrosRedactorForm;
+
+		Random random = new Random();
 
 		#region Инициализация
 
@@ -55,7 +71,7 @@ namespace MacroFisher
 			_macrosList.Add(TestMacrosGenerator.GetMacros(1));
 			_macrosList.Add(TestMacrosGenerator.GetMacros(2));
 			_macrosList.Add(TestMacrosGenerator.GetMacros(3));
-			_macrosList.Add(TestMacrosGenerator.GetMacros(4));
+
 			RefreshListBox();
 		}
 
@@ -91,10 +107,9 @@ namespace MacroFisher
 
 			#endregion
 		}
+
 		#endregion
-
-		//TODO: Добавить галочку при добавлении макрокнопки использовать рандом или нет.
-
+		
 		/// <summary>
 		/// Начать выполнение выбранного макроса
 		/// </summary>
@@ -116,78 +131,15 @@ namespace MacroFisher
 
 			#endregion
 
-			//if (_currentMacros == null)
-			//{
-			//	pickMacrosErrorLabel.Visible = true;
-			//	return;
-			//}
-
-			Thread.Sleep(3000);
-
-			while (true)
+			if (_currentMacros == null)
 			{
-				Random random = new Random();
-				var macros = new Macros("Копать");
-				macros.AddCommandKey('P', 0, 4, PressType.Press);
-				macros.AddCommandKey(' ', 0, random.Next(1, 5), PressType.Press);
-
-				int isGo = random.Next(1, 11);
-				if (isGo == 1)
-				{
-					char key;
-					switch (random.Next(1, 5))
-					{
-						case 1:
-							key = 'w';
-							break;
-						case 2:
-							key = 'a';
-							break;
-						case 3:
-							key = 's';
-							break;
-						case 4:
-							key = 'd';
-							break;
-						default:
-							key = 's';
-							break;
-					}
-					
-					macros.AddCommand(key, random.Next(5, 10), random.Next(1, 5),
-						PressType.Hold);
-				}
-
-				foreach (Command command in macros)
-				{
-					if (command.Type == PressType.Hold)
-					{
-						keybd_event(command.Key /*клавиша*/, 1 /*???*/,
-							KEYEVENTF_EXTENDEDKEY, 0);
-
-						Thread.Sleep(command.MicrosecondsPressed);
-
-						keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_KEYUP,
-							0);
-
-						Thread.Sleep(command.MicrosecondsPausedAfter);
-					}
-					else
-					{
-						keybd_event(command.Key /*клавиша*/, 1 /*???*/,
-							KEYEVENTF_EXTENDEDKEY, 0);
-
-						Thread.Sleep(100);
-
-						keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_KEYUP,
-							0);
-
-						Thread.Sleep(command.MicrosecondsPausedAfter);
-					}
-				}
-
-				//RunMacros(_currentMacros);
+				pickMacrosErrorLabel.Visible = true;
+				return;
 			}
+
+			Thread.Sleep(4000);
+
+			RunMacros(_currentMacros);
 
 			#endregion
 
@@ -198,7 +150,30 @@ namespace MacroFisher
 			#endregion
 		}
 
+		/// <summary>
+		/// Выполнить макрос
+		/// </summary>
+		/// <param name="macros">Макрос</param>
+		private void RunMacros(Macros macros)
+		{
+			foreach (Command command in macros)
+			{
+				keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_EXTENDEDKEY, 0);
+
+				Thread.Sleep(command.MicrosecondsPressed);
+
+				Thread.Sleep(random.Next(command.PressedRandomMin,command.PressedRandomMax));
+
+				keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_KEYUP, 0);
+
+				Thread.Sleep(command.MicrosecondsPausedAfter);
+
+				Thread.Sleep(random.Next(command.PauseRandomMin, command.PauseRandomMax));
+			}
+		}
+
 		#region Отслеживание нажатий 3
+
 		//private void Start()
 		//{
 		//	while (true)
@@ -269,7 +244,9 @@ namespace MacroFisher
 		/// <param name="e"></param>
 		private void MacroFisherForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			Serialization.Save("LastMacroses.mccs", _macrosList);
+			//Properties.Settings.Default.Save();
+			//Properties.Settings.Default.Upgrade();
+			//MessageBox.Show("Saved Settings");
 		}
 
 		/// <summary>
@@ -330,30 +307,16 @@ namespace MacroFisher
 			}
 		}
 
-		public void RunMacros(Macros macros)
+		/// <summary>
+		/// Повторить макрос X раз
+		/// </summary>
+		/// <param name="macros">Макрос</param>
+		/// <param name="X">Количество повторений</param>
+		private void RepeatMacrosXTimes(Macros macros, int X)
 		{
-			foreach (Command command in _currentMacros)
+			for (int i = 0; i < X; i++)
 			{
-				if (command.Type == PressType.Hold)
-				{
-					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
-
-					Thread.Sleep(command.MicrosecondsPressed);
-
-					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
-
-					Thread.Sleep(command.MicrosecondsPausedAfter);
-				}
-				else
-				{
-					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_EXTENDEDKEY, 0);
-
-					Thread.Sleep(100);
-
-					keybd_event(command.Key/*клавиша*/, 1/*???*/, KEYEVENTF_KEYUP, 0);
-
-					Thread.Sleep(command.MicrosecondsPausedAfter);
-				}
+				RunMacros(macros);
 			}
 		}
 	}
