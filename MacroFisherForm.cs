@@ -58,6 +58,10 @@ namespace MacroFisher
 		/// </summary>
 		private MacrosRedactorForm _macrosRedactorForm;
 
+		private int _secondsBeforeStart;
+
+		private int _timesToRepeat;
+
 		Random random = new Random();
 
 		#region Инициализация
@@ -137,7 +141,15 @@ namespace MacroFisher
 				return;
 			}
 
-			Thread.Sleep(4000);
+			if (string.IsNullOrWhiteSpace(startSecTextBox.Text))
+			{
+				_secondsBeforeStart = 0;
+			}
+			else
+			{
+				_secondsBeforeStart = int.Parse(startSecTextBox.Text);
+			}
+			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert);
 
 			RunMacros(_currentMacros);
 
@@ -300,11 +312,14 @@ namespace MacroFisher
 		private void AddMacroButton_Click(object sender, EventArgs e)
 		{
 			_macrosRedactorForm = new MacrosRedactorForm();
-			if (_macrosRedactorForm.ShowDialog() == DialogResult.OK)
+
+			if (_macrosRedactorForm.ShowDialog() != DialogResult.OK)
 			{
-				_macrosList.Add(_macrosRedactorForm.Macros);
-				RefreshListBox();
+				return;
 			}
+
+			_macrosList.Add(_macrosRedactorForm.Macros);
+			RefreshListBox();
 		}
 
 		/// <summary>
@@ -318,6 +333,51 @@ namespace MacroFisher
 			{
 				RunMacros(macros);
 			}
+		}
+
+		/// <summary>
+		/// Валидация чисел
+		/// </summary>
+		private void IntValidation(object sender, KeyPressEventArgs e)
+		{
+			if ((e.KeyChar < '0' || e.KeyChar > '9') && e.KeyChar != (char)Keys.Back)
+			{
+				e.Handled = true;
+			}
+			else
+			{
+				e.Handled = false;
+			}
+		}
+
+		private void repeatMacrosButton_Click(object sender, EventArgs e)
+		{
+			if (_currentMacros == null)
+			{
+				pickMacrosErrorLabel.Visible = true;
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(startSecTextBox.Text))
+			{
+				_secondsBeforeStart = 0;
+			}
+			else
+			{
+				_secondsBeforeStart = int.Parse(startSecTextBox.Text);
+			}
+			if (string.IsNullOrWhiteSpace(NTextBox.Text))
+			{
+				_timesToRepeat = 1;
+			}
+			else
+			{
+				_timesToRepeat = int.Parse(NTextBox.Text);
+			}
+
+			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert);
+
+			RepeatMacrosXTimes(_currentMacros, _timesToRepeat * Command.MicroConvert);
 		}
 	}
 }

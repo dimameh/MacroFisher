@@ -7,7 +7,7 @@ namespace MacroFisher
 	{
 		#region Constants
 
-		private const int _microConvert = 1000;
+		public const int MicroConvert = 1000;
 
 		#endregion
 
@@ -39,7 +39,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 				}
 
-				_microsecondsPressed = value * _microConvert;
+				_microsecondsPressed = value * MicroConvert;
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 				}
 
-				_pressedRandomMin = value * _microConvert;
+				_pressedRandomMin = value * MicroConvert;
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 				}
 
-				_pressedRandomMax = value * _microConvert;
+				_pressedRandomMax = value * MicroConvert;
 			}
 		}
 
@@ -84,7 +84,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 				}
 
-				_pauseRandomMin = value * _microConvert;
+				_pauseRandomMin = value * MicroConvert;
 			}
 		}
 
@@ -99,7 +99,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 				}
 
-				_pauseRandomMax = value * _microConvert;
+				_pauseRandomMax = value * MicroConvert;
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 86400 секунд (24 часа).");
 				}
 
-				_microsecondsPausedAfter = value * _microConvert;
+				_microsecondsPausedAfter = value * MicroConvert;
 			}
 		}
 

@@ -20,14 +20,18 @@ namespace MacroFisher
 		/// <returns></returns>
 		[DllImport("user32.dll")] static extern short VkKeyScan(char ch);
 
-
 		public Macros Macros { get;}
+
+		private List<int> _selectedIndexes;
 
 		public MacrosRedactorForm()
 		{
 			InitializeComponent();
 			Macros = new Macros("Current");
+			_selectedIndexes = new List<int>();
 		}
+
+		
 
 		private void addButton_Click(object sender, EventArgs e)
 		{
@@ -39,8 +43,11 @@ namespace MacroFisher
 				pauseMinTextBox.Text == string.Empty ||
 				pauseMaxTextBox.Text == string.Empty)
 			{
-				
+				errorLabel.Visible = true;
+				return;
 			}
+			errorLabel.Visible = false;
+
 			byte key;
 			keyTextBox.Text = keyTextBox.Text.ToUpper();
 			if (keyTextBox.Text.Length > 1)
@@ -52,47 +59,51 @@ namespace MacroFisher
 				key = (byte) VkKeyScan(keyTextBox.Text[0]);
 			}
 
-			AddMacroAtGridAndList(keyTextBox.Text, key, int.Parse(pressTimeTextBox.Text),
-					int.Parse(pauseTimeTextBox.Text));
+			AddMacroAtGridAndList(keyTextBox.Text, int.Parse(pressTimeTextBox.Text),
+				int.Parse(pauseTimeTextBox.Text), int.Parse(pressMinTextBox.Text),
+				int.Parse(pressMaxTextBox.Text), int.Parse(pauseMinTextBox.Text),
+				int.Parse(pauseMaxTextBox.Text));
 
 			keyTextBox.Text = string.Empty;
 			pressTimeTextBox.Text = string.Empty;
 			pauseTimeTextBox.Text = string.Empty;
+			pressMinTextBox.Text = string.Empty ;
+			pressMaxTextBox.Text = string.Empty ;
+			pauseMinTextBox.Text = string.Empty ;
+			pauseMaxTextBox.Text = string.Empty;
 		}
 
-		private void AddMacroAtGridAndList(string strKey, byte byteKey, int pressTime, int pauseTime)
+		/// <summary>
+		/// Добавить команду в список
+		/// </summary>
+		private void AddMacroAtGridAndList(string keyChar, int secondsPressed,
+			int secondsPaused, int pressRandMin, int pressRandMax, int pauseRandMin,
+			int pauseRandMax)
 		{
-			//if (holdRadioButton.Checked)
-			//{
-			//	macrosDataGrid.Rows.Add(strKey, pressTime,
-			//		pauseTime, "Зажать");
+			macrosDataGrid.Rows.Add(keyChar, secondsPressed,
+				secondsPaused, '(' + pressRandMin + " ; " + pressRandMax + ')',
+				'(' + pauseRandMin + " ; " + pauseRandMax + ')');
 
-			//	Macros.AddCommand(new Command(byteKey, int.Parse(pressTimeTextBox.Text),
-			//		int.Parse(pauseTimeTextBox.Text)));
-			//}
-			//else
-			//{
-			//	macrosDataGrid.Rows.Add(strKey, pressTime,
-			//		pauseTime, "Тыкнуть");
+			byte key;
 
-			//	Macros.AddCommand(new Command(byteKey, int.Parse(pressTimeTextBox.Text),
-			//		int.Parse(pauseTimeTextBox.Text)));
-			//}
-		}
-
-		private void pressTimeTextBox_KeyPress(object sender, KeyPressEventArgs e)
-		{
-			if ((e.KeyChar < '0' || e.KeyChar > '9') && e.KeyChar != (char)Keys.Back) 
+			if (keyChar.Length > 1)
 			{
-				e.Handled = true;
+				key = GetKeyFromText(keyTextBox.Text);
 			}
 			else
 			{
-				e.Handled = false;
+				key = (byte)VkKeyScan(keyTextBox.Text[0]);
 			}
+
+			Macros.AddCommand(new Command(key, secondsPressed,
+				secondsPaused, pressRandMin, pressRandMax, pauseRandMin,
+				pauseRandMax));
 		}
 
-		private void pauseTimeTextBox_KeyPress(object sender, KeyPressEventArgs e)
+		/// <summary>
+		/// Валидация чисел
+		/// </summary>
+		private void IntValidation(object sender, KeyPressEventArgs e)
 		{
 			if ((e.KeyChar < '0' || e.KeyChar > '9') && e.KeyChar != (char)Keys.Back)
 			{
@@ -104,6 +115,11 @@ namespace MacroFisher
 			}
 		}
 
+		/// <summary>
+		/// Получить байтовый ключ из текстового кода
+		/// </summary>
+		/// <param name="text">string строка</param>
+		/// <returns></returns>
 		private byte GetKeyFromText(string text)
 		{
 			switch (text)
@@ -118,17 +134,49 @@ namespace MacroFisher
 					throw new ArgumentException("No such key");
 			}
 		}
-
+		
+		/// <summary>
+		/// Сохранить
+		/// </summary>
 		private void saveButton_Click(object sender, EventArgs e)
 		{
-			if (macrosNameTextBox.Text != string.Empty)
+			if (macrosNameTextBox.Text != string.Empty && !Macros.IsEmpty)
 			{
 				Macros.Name = macrosNameTextBox.Text;
 				DialogResult = DialogResult.OK;
 			}
 			else
 			{
-				MessageBox.Show("Требуется название макроса");
+				MessageBox.Show("Требуется название макроса. Макрос также не должен быть пустым");
+			}
+		}
+
+		private void macrosDataGrid_RowsRemoved(object sender, DataGridViewRowsRemovedEventArgs e)
+		{
+			foreach (int index in _selectedIndexes)
+			{
+				Macros.RemoveAt(index);
+			}
+		}
+
+		private void macrosDataGrid_SelectionChanged(object sender, EventArgs e)
+		{
+			for (int i = 0; i < macrosDataGrid.SelectedRows.Count; i++)
+			{
+				_selectedIndexes[i] = macrosDataGrid.SelectedRows[i].Index;
+			}
+		}
+
+		private void MacrosRedactorForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			if (macrosNameTextBox.Text != string.Empty && !Macros.IsEmpty)
+			{
+				Macros.Name = macrosNameTextBox.Text;
+				DialogResult = DialogResult.OK;
+			}
+			else
+			{
+				DialogResult = DialogResult.Abort;
 			}
 		}
 	}

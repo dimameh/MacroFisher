@@ -22,6 +22,8 @@ namespace MacroFisher
 		/// </summary>
 		public string Name { get; set; }
 
+		public bool IsEmpty => _macrosList.Count == 0;
+
 		#endregion
 
 		#region Constructor
@@ -100,6 +102,11 @@ namespace MacroFisher
 					_macrosList.Remove(macros);
 				}
 			}
+		}
+
+		public void RemoveAt(int index)
+		{
+			_macrosList.RemoveAt(index);
 		}
 
 		#region Implementation of IEnumerable

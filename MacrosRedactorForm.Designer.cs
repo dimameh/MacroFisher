@@ -30,6 +30,11 @@
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MacrosRedactorForm));
 			this.macrosDataGrid = new System.Windows.Forms.DataGridView();
+			this.Key = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.seccondsPressed = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.seccondsPausedAfter = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.PressRandom = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.RandomPause = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.addButton = new System.Windows.Forms.Button();
 			this.keyTextBox = new System.Windows.Forms.TextBox();
 			this.pressTimeTextBox = new System.Windows.Forms.TextBox();
@@ -48,11 +53,8 @@
 			this.pauseMaxTextBox = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.pauseMinTextBox = new System.Windows.Forms.TextBox();
-			this.Key = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.seccondsPressed = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.seccondsPausedAfter = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.PressRandom = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.RandomPause = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.errorLabel = new System.Windows.Forms.Label();
+			this.label6 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.macrosDataGrid)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -72,6 +74,50 @@
 			this.macrosDataGrid.RowTemplate.Height = 24;
 			this.macrosDataGrid.Size = new System.Drawing.Size(703, 318);
 			this.macrosDataGrid.TabIndex = 0;
+			this.macrosDataGrid.RowsRemoved += new System.Windows.Forms.DataGridViewRowsRemovedEventHandler(this.macrosDataGrid_RowsRemoved);
+			this.macrosDataGrid.SelectionChanged += new System.EventHandler(this.macrosDataGrid_SelectionChanged);
+			// 
+			// Key
+			// 
+			this.Key.Frozen = true;
+			this.Key.HeaderText = "Клавиша";
+			this.Key.MaxInputLength = 5;
+			this.Key.Name = "Key";
+			this.Key.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.Key.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.Key.ToolTipText = "Начните ввод";
+			// 
+			// seccondsPressed
+			// 
+			this.seccondsPressed.Frozen = true;
+			this.seccondsPressed.HeaderText = "Время зажатия";
+			this.seccondsPressed.Name = "seccondsPressed";
+			this.seccondsPressed.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.seccondsPressed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// seccondsPausedAfter
+			// 
+			this.seccondsPausedAfter.Frozen = true;
+			this.seccondsPausedAfter.HeaderText = "Время ожидания после выполнения";
+			this.seccondsPausedAfter.Name = "seccondsPausedAfter";
+			this.seccondsPausedAfter.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.seccondsPausedAfter.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// PressRandom
+			// 
+			this.PressRandom.Frozen = true;
+			this.PressRandom.HeaderText = "Рамки зажатия";
+			this.PressRandom.Name = "PressRandom";
+			this.PressRandom.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.PressRandom.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// RandomPause
+			// 
+			this.RandomPause.Frozen = true;
+			this.RandomPause.HeaderText = "Рамки паузы";
+			this.RandomPause.Name = "RandomPause";
+			this.RandomPause.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.RandomPause.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// addButton
 			// 
@@ -98,7 +144,7 @@
 			this.pressTimeTextBox.Name = "pressTimeTextBox";
 			this.pressTimeTextBox.Size = new System.Drawing.Size(111, 22);
 			this.pressTimeTextBox.TabIndex = 7;
-			this.pressTimeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pressTimeTextBox_KeyPress);
+			this.pressTimeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IntValidation);
 			// 
 			// pauseTimeTextBox
 			// 
@@ -107,7 +153,7 @@
 			this.pauseTimeTextBox.Name = "pauseTimeTextBox";
 			this.pauseTimeTextBox.Size = new System.Drawing.Size(92, 22);
 			this.pauseTimeTextBox.TabIndex = 8;
-			this.pauseTimeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.pauseTimeTextBox_KeyPress);
+			this.pauseTimeTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IntValidation);
 			// 
 			// KeyHintLabel
 			// 
@@ -179,6 +225,7 @@
 			this.pressMinTextBox.Name = "pressMinTextBox";
 			this.pressMinTextBox.Size = new System.Drawing.Size(92, 22);
 			this.pressMinTextBox.TabIndex = 16;
+			this.pressMinTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IntValidation);
 			// 
 			// label3
 			// 
@@ -196,6 +243,7 @@
 			this.pressMaxTextBox.Name = "pressMaxTextBox";
 			this.pressMaxTextBox.Size = new System.Drawing.Size(92, 22);
 			this.pressMaxTextBox.TabIndex = 18;
+			this.pressMaxTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IntValidation);
 			// 
 			// label4
 			// 
@@ -213,6 +261,7 @@
 			this.pauseMaxTextBox.Name = "pauseMaxTextBox";
 			this.pauseMaxTextBox.Size = new System.Drawing.Size(92, 22);
 			this.pauseMaxTextBox.TabIndex = 22;
+			this.pauseMaxTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IntValidation);
 			// 
 			// label5
 			// 
@@ -230,55 +279,37 @@
 			this.pauseMinTextBox.Name = "pauseMinTextBox";
 			this.pauseMinTextBox.Size = new System.Drawing.Size(92, 22);
 			this.pauseMinTextBox.TabIndex = 20;
+			this.pauseMinTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.IntValidation);
 			// 
-			// Key
+			// errorLabel
 			// 
-			this.Key.Frozen = true;
-			this.Key.HeaderText = "Клавиша";
-			this.Key.MaxInputLength = 5;
-			this.Key.Name = "Key";
-			this.Key.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.Key.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.Key.ToolTipText = "Начните ввод";
+			this.errorLabel.AutoSize = true;
+			this.errorLabel.BackColor = System.Drawing.Color.Transparent;
+			this.errorLabel.ForeColor = System.Drawing.Color.Red;
+			this.errorLabel.Location = new System.Drawing.Point(543, 336);
+			this.errorLabel.Name = "errorLabel";
+			this.errorLabel.Size = new System.Drawing.Size(145, 17);
+			this.errorLabel.TabIndex = 24;
+			this.errorLabel.Text = "Заполните все поля!";
+			this.errorLabel.Visible = false;
 			// 
-			// seccondsPressed
+			// label6
 			// 
-			this.seccondsPressed.Frozen = true;
-			this.seccondsPressed.HeaderText = "Время зажатия";
-			this.seccondsPressed.Name = "seccondsPressed";
-			this.seccondsPressed.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.seccondsPressed.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// seccondsPausedAfter
-			// 
-			this.seccondsPausedAfter.Frozen = true;
-			this.seccondsPausedAfter.HeaderText = "Время ожидания после выполнения";
-			this.seccondsPausedAfter.Name = "seccondsPausedAfter";
-			this.seccondsPausedAfter.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.seccondsPausedAfter.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// PressRandom
-			// 
-			this.PressRandom.Frozen = true;
-			this.PressRandom.HeaderText = "Рамки зажатия";
-			this.PressRandom.Name = "PressRandom";
-			this.PressRandom.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.PressRandom.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// RandomPause
-			// 
-			this.RandomPause.Frozen = true;
-			this.RandomPause.HeaderText = "Рамки паузы";
-			this.RandomPause.Name = "RandomPause";
-			this.RandomPause.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.RandomPause.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(359, 336);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(136, 68);
+			this.label6.TabIndex = 25;
+			this.label6.Text = "Обзначения мыши:\r\nLMB - ЛКМ\r\nRMB - ПКМ\r\nMMB - СреднКМ";
 			// 
 			// MacrosRedactorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::MacroFisher.Properties.Resources.index;
-			this.ClientSize = new System.Drawing.Size(848, 396);
+			this.ClientSize = new System.Drawing.Size(848, 409);
+			this.Controls.Add(this.label6);
+			this.Controls.Add(this.errorLabel);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this.pauseMaxTextBox);
 			this.Controls.Add(this.label5);
@@ -301,6 +332,7 @@
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MacrosRedactorForm";
 			this.Text = "Редактор макроса";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MacrosRedactorForm_FormClosing);
 			((System.ComponentModel.ISupportInitialize)(this.macrosDataGrid)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
@@ -333,5 +365,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn seccondsPausedAfter;
 		private System.Windows.Forms.DataGridViewTextBoxColumn PressRandom;
 		private System.Windows.Forms.DataGridViewTextBoxColumn RandomPause;
+		private System.Windows.Forms.Label errorLabel;
+		private System.Windows.Forms.Label label6;
 	}
 }
