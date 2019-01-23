@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using MacroFisher.Tools;
 
 namespace MacroFisher
 {
@@ -75,7 +76,7 @@ namespace MacroFisher
 			_macrosList.Add(TestMacrosGenerator.GetMacros(1));
 			_macrosList.Add(TestMacrosGenerator.GetMacros(2));
 			_macrosList.Add(TestMacrosGenerator.GetMacros(3));
-
+			_macrosList.Add(TestMacrosGenerator.GetMacros(4));
 			RefreshListBox();
 		}
 
@@ -161,29 +162,7 @@ namespace MacroFisher
 
 			#endregion
 		}
-
-		/// <summary>
-		/// Выполнить макрос
-		/// </summary>
-		/// <param name="macros">Макрос</param>
-		private void RunMacros(Macros macros)
-		{
-			foreach (Command command in macros)
-			{
-				keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_EXTENDEDKEY, 0);
-
-				Thread.Sleep(command.MicrosecondsPressed);
-
-				Thread.Sleep(random.Next(command.PressedRandomMin,command.PressedRandomMax));
-
-				keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_KEYUP, 0);
-
-				Thread.Sleep(command.MicrosecondsPausedAfter);
-
-				Thread.Sleep(random.Next(command.PauseRandomMin, command.PauseRandomMax));
-			}
-		}
-
+		
 		#region Отслеживание нажатий 3
 
 		//private void Start()
@@ -323,6 +302,42 @@ namespace MacroFisher
 		}
 
 		/// <summary>
+		/// Выполнить макрос
+		/// </summary>
+		/// <param name="macros">Макрос</param>
+		private void RunMacros(Macros macros)
+		{
+			foreach (Command command in macros)
+			{
+				MouseControler.Move(100, 100);
+				if (command.Key == 0x01)
+				{
+					MouseControler.LeftClick();
+					Thread.Sleep(command.MicrosecondsPausedAfter);
+					Thread.Sleep(random.Next(command.PauseRandomMin, command.PauseRandomMax));
+				}
+				else
+				{
+					keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_EXTENDEDKEY,
+						0);
+
+					Thread.Sleep(command.MicrosecondsPressed);
+
+					Thread.Sleep(random.Next(command.PressedRandomMin,
+						command.PressedRandomMax));
+
+					keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_KEYUP, 0);
+
+					Thread.Sleep(command.MicrosecondsPausedAfter);
+
+					Thread.Sleep(random.Next(command.PauseRandomMin,
+						command.PauseRandomMax));
+				}
+				MouseControler.Move(500, 500);
+			}
+		}
+
+		/// <summary>
 		/// Повторить макрос X раз
 		/// </summary>
 		/// <param name="macros">Макрос</param>
@@ -350,6 +365,11 @@ namespace MacroFisher
 			}
 		}
 
+		/// <summary>
+		/// Повторить макрос
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void repeatMacrosButton_Click(object sender, EventArgs e)
 		{
 			if (_currentMacros == null)

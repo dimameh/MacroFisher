@@ -81,8 +81,8 @@ namespace MacroFisher
 			int pauseRandMax)
 		{
 			macrosDataGrid.Rows.Add(keyChar, secondsPressed,
-				secondsPaused, '(' + pressRandMin + " ; " + pressRandMax + ')',
-				'(' + pauseRandMin + " ; " + pauseRandMax + ')');
+				secondsPaused, "(" + pressRandMin + " ; " + pressRandMax + ")",
+				"(" + pauseRandMin + " ; " + pauseRandMax + ")");
 
 			byte key;
 

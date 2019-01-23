@@ -52,6 +52,7 @@
     <Compile Include="MacrosRedactorForm.Designer.cs">
       <DependentUpon>MacrosRedactorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tools\MouseControler.cs" />
     <Compile Include="Tools\TestMacrosGenerator.cs" />
     <Compile Include="MacrosLib\Comand.cs" />
     <Compile Include="LastMacroses.cs" />

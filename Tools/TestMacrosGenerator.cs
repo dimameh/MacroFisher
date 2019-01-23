@@ -1,4 +1,6 @@
-﻿namespace MacroFisher
+﻿using System.ComponentModel;
+
+namespace MacroFisher
 {
 	public static class TestMacrosGenerator
 	{
@@ -29,6 +31,12 @@
 					macros.AddCommand('w', 1, 0, 0, 0, 1, 5);
 					macros.AddCommand('s', 1, 0, 0, 0, 0, 0);
 					macros.AddCommand('s', 1, 0, 0, 0, 1, 5);
+					return macros;
+				case 4:
+					macros.AddCommand(0x01, 1, 1, 0, 0, 0, 0);
+					macros.AddCommand(0x02, 1, 1, 0, 0, 0, 0);
+					macros.AddCommand(0x01, 0, 0, 0, 0, 0, 0);
+					macros.AddCommand(0x01, 0, 0, 0, 0, 0, 0);
 					return macros;
 				default:
 					return macros;
