@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using AutoIt;
 using MacroFisher.Tools;
+using System.Windows.Media.Media3D;
 
 namespace MacroFisher
 {
@@ -35,7 +38,6 @@ namespace MacroFisher
 		[DllImport("user32.dll")]
 		static extern void keybd_event(byte bVk, byte bScan, uint dwFlags,
 			int dwExtraInfo);
-
 		//зажать
 		const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
 
@@ -73,11 +75,48 @@ namespace MacroFisher
 
 			_macrosList = new List<Macros>();
 
-			_macrosList.Add(TestMacrosGenerator.GetMacros(1));
-			_macrosList.Add(TestMacrosGenerator.GetMacros(2));
-			_macrosList.Add(TestMacrosGenerator.GetMacros(3));
-			_macrosList.Add(TestMacrosGenerator.GetMacros(4));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("test1"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("test2"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("test3"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("test4"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("testU"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Комариное Караси"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Острог Караси"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Комариное Караси SPEED"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Острог Угри Мост"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Спининг Белая"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Копать"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Еда+Чай"));
 			RefreshListBox();
+		}
+
+		private Macros GenerateRandMenuMacros()
+		{
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 20)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				return inv;
+			}
+
+			return null;
 		}
 
 		/// <summary>
@@ -114,14 +153,12 @@ namespace MacroFisher
 		}
 
 		#endregion
-		
+
 		/// <summary>
 		/// Начать выполнение выбранного макроса
 		/// </summary>
 		private void StartButton_Click(object sender, EventArgs e)
 		{
-			#region Имитация нажатий через 5 сек
-
 			#region шпаргалка
 
 			//ссылка на коды клавиш
@@ -141,28 +178,56 @@ namespace MacroFisher
 				pickMacrosErrorLabel.Visible = true;
 				return;
 			}
+			_secondsBeforeStart = string.IsNullOrWhiteSpace(startSecTextBox.Text) ? 0 : int.Parse(startSecTextBox.Text);
 
-			if (string.IsNullOrWhiteSpace(startSecTextBox.Text))
+			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert * 10);
+
+			switch (_currentMacros.Name)
 			{
-				_secondsBeforeStart = 0;
+				case "Фидер Комариное Караси":
+					RunFiderKomarinoeMacros();
+					return;
+				case "Фидер Острог Караси":
+					RunFiderOstrogMacros();
+					return;
+				case "Копать":
+					RunKopatMacros();
+					return;
+				default:
+					RunMacros(_currentMacros);
+
+					#region Отслеживание нажатий
+
+					//keyboardScaner.Start();
+
+					#endregion
+
+					break;
 			}
-			else
-			{
-				_secondsBeforeStart = int.Parse(startSecTextBox.Text);
-			}
-			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert);
 
-			RunMacros(_currentMacros);
+			//#region TEST
 
-			#endregion
+			//Camera Cam = new MatrixCamera(); // камера
+			//float maxY; // ограничение по оси Y
+			//float speed; //скорость перемещения камеры
 
-			#region Отслеживание нажатий
+			//Cam.transform.position = new Vector3(transform.position.x,
+			//		transform.position.y - speed, transform.position.z);
 
-			//keyboardScaner.Start();
+			//if (Cam.transform.position.y < maxY) // ограничение по оси Y
+			//{
+			//	Cam.transform.position = new Vector3(transform.position.x, maxY,transform.position.z);
+			//}
 
-			#endregion
+
+
+
+			//#endregion
+
+
+			Camera cam = new MatrixCamera();
 		}
-		
+
 		#region Отслеживание нажатий 3
 
 		//private void Start()
@@ -309,31 +374,131 @@ namespace MacroFisher
 		{
 			foreach (Command command in macros)
 			{
-				MouseControler.Move(100, 100);
-				if (command.Key == 0x01)
+				//if (command.StrKey == "RightClick")
+				//{
+				//	if (command.SecondsPressed == 0)
+				//	{
+				//		AutoItX.MouseClick("RIGHT");
+				//		Thread.Sleep(command.SecondsPausedAfter);
+				//		Thread.Sleep(random.Next(command.PauseRandomMin,
+				//			command.PauseRandomMax + 1));
+				//	}
+				//	else
+				//	{
+				//		MouseControler.RightHoldXSeconds(command.SecondsPressed);
+				//		Thread.Sleep(command.SecondsPausedAfter);
+				//		Thread.Sleep(random.Next(command.PauseRandomMin,
+				//			command.PauseRandomMax + 1));
+				//	}
+				//}
+				//else if (command.StrKey == "MouseMove")
+				//{
+				//	AutoItX.MouseMove(command.SecondsPressed, command.SecondsPausedAfter);
+				//}
+				//else if (command.StrKey == "LeftCick")
+				//{
+				//	if (command.SecondsPressed == 0)
+				//	{
+				//		AutoItX.MouseClick("LEFT");
+				//		Thread.Sleep(command.SecondsPausedAfter);
+				//		Thread.Sleep(random.Next(command.PauseRandomMin,
+				//			command.PauseRandomMax + 1));
+				//	}
+				//	else
+				//	{
+				//		MouseControler.LeftHoldXSeconds(command.SecondsPressed);
+				//		Thread.Sleep(command.SecondsPausedAfter);
+				//		Thread.Sleep(random.Next(command.PauseRandomMin,
+				//			command.PauseRandomMax + 1));
+				//	}
+				//}
+				//else if (command.StrKey == "WheelUp")
+				//{
+				//	AutoItX.MouseWheel("up", random.Next(command.PressedRandomMin/ 100, command.PressedRandomMax/100));
+				//	Thread.Sleep(command.SecondsPausedAfter);
+				//	Thread.Sleep(random.Next(command.PauseRandomMin,
+				//		command.PauseRandomMax + 1));
+				//}
+				//else if (command.StrKey == "WheelDown")
+				//{
+				//	AutoItX.MouseWheel("down", random.Next(command.PressedRandomMin / 100, command.PressedRandomMax / 100));
+				//	Thread.Sleep(command.SecondsPausedAfter);
+				//	Thread.Sleep(random.Next(command.PauseRandomMin,
+				//		command.PauseRandomMax + 1));
+				//}
+
+				//ПКМ
+				if (command.Key == 0x02)
 				{
-					MouseControler.LeftClick();
-					Thread.Sleep(command.MicrosecondsPausedAfter);
-					Thread.Sleep(random.Next(command.PauseRandomMin, command.PauseRandomMax));
+					if (command.SecondsPressed == 0)
+					{
+						AutoItX.MouseClick("RIGHT");
+						Thread.Sleep(command.SecondsPausedAfter);
+						Thread.Sleep(random.Next(command.PauseRandomMin,
+							command.PauseRandomMax + 1));
+					}
+					else
+					{
+						MouseControler.RightHoldXSeconds(command.SecondsPressed);
+						Thread.Sleep(command.SecondsPausedAfter);
+						Thread.Sleep(random.Next(command.PauseRandomMin,
+							command.PauseRandomMax + 1));
+					}
+				}
+				//Двинуть мышь
+				else if (command.Key == 0x03)
+				{
+					AutoItX.MouseMove(command.SecondsPressed/100, command.SecondsPausedAfter/100, 50);
+				}
+				//ЛКМ
+				else if (command.Key == 0x01)
+				{
+					if (command.SecondsPressed == 0)
+					{
+						AutoItX.MouseClick("LEFT");
+						Thread.Sleep(command.SecondsPausedAfter);
+						Thread.Sleep(random.Next(command.PauseRandomMin,
+							command.PauseRandomMax + 1));
+					}
+					else
+					{
+						MouseControler.LeftHoldXSeconds(command.SecondsPressed);
+						Thread.Sleep(command.SecondsPausedAfter);
+						Thread.Sleep(random.Next(command.PauseRandomMin,
+							command.PauseRandomMax + 1));
+					}
+				}
+				else if (command.StrKey == "WheelUp")
+				{
+					AutoItX.MouseWheel("up", random.Next(command.PressedRandomMin / 100, command.PressedRandomMax / 100));
+					Thread.Sleep(command.SecondsPausedAfter);
+					Thread.Sleep(random.Next(command.PauseRandomMin,
+						command.PauseRandomMax + 1));
+				}
+				else if (command.StrKey == "WheelDown")
+				{
+					AutoItX.MouseWheel("down", random.Next(command.PressedRandomMin / 100, command.PressedRandomMax / 100));
+					Thread.Sleep(command.SecondsPausedAfter);
+					Thread.Sleep(random.Next(command.PauseRandomMin,
+						command.PauseRandomMax + 1));
 				}
 				else
 				{
 					keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_EXTENDEDKEY,
 						0);
 
-					Thread.Sleep(command.MicrosecondsPressed);
+					Thread.Sleep(command.SecondsPressed);
 
 					Thread.Sleep(random.Next(command.PressedRandomMin,
-						command.PressedRandomMax));
+						command.PressedRandomMax + 1));
 
 					keybd_event(command.Key /*клавиша*/, 1 /*???*/, KEYEVENTF_KEYUP, 0);
 
-					Thread.Sleep(command.MicrosecondsPausedAfter);
+					Thread.Sleep(command.SecondsPausedAfter);
 
 					Thread.Sleep(random.Next(command.PauseRandomMin,
-						command.PauseRandomMax));
+						command.PauseRandomMax + 1));
 				}
-				MouseControler.Move(500, 500);
 			}
 		}
 
@@ -344,11 +509,77 @@ namespace MacroFisher
 		/// <param name="X">Количество повторений</param>
 		private void RepeatMacrosXTimes(Macros macros, int X)
 		{
+			if (macros.Name == "Фидер Комариное Караси")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunFiderKomarinoeMacros();
+				}
+
+				return;
+			}
+			if (macros.Name == "Фидер Острог Караси")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunFiderOstrogMacros();
+				}
+
+				return;
+			}
+			if (macros.Name == "Копать")
+			{
+				int counter = 0;
+				while (counter < X)
+				{
+					//int rand = random.Next(2, 5);
+					//for (int i = 0; i < 1; i++)
+					//{
+						RunKopatMacros();
+						counter++;
+					//}
+
+					//RunMacros(TestMacrosGenerator.GetMacros("Еда+Чай"));
+				}
+				return;
+			}
+
+			if (macros.Name == "Спининг Белая")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunSpiningBeloeMacros();
+				}
+
+				return;
+			}
+
+			if (macros.Name == "Фидер Острог Угри Мост")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunFiderOstrogUgriMostMacros();
+				}
+
+				return;
+			}
+
+			if (macros.Name == "Фидер Комариное Караси SPEED")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunFiderKomarinoeSPEEDMacros();
+				}
+
+				return;
+			}
+
 			for (int i = 0; i < X; i++)
 			{
 				RunMacros(macros);
 			}
 		}
+
 
 		/// <summary>
 		/// Валидация чисел
@@ -386,6 +617,7 @@ namespace MacroFisher
 			{
 				_secondsBeforeStart = int.Parse(startSecTextBox.Text);
 			}
+
 			if (string.IsNullOrWhiteSpace(NTextBox.Text))
 			{
 				_timesToRepeat = 1;
@@ -395,9 +627,229 @@ namespace MacroFisher
 				_timesToRepeat = int.Parse(NTextBox.Text);
 			}
 
-			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert);
+			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert*10);
 
-			RepeatMacrosXTimes(_currentMacros, _timesToRepeat * Command.MicroConvert);
+			RepeatMacrosXTimes(_currentMacros, _timesToRepeat);
+		}
+
+
+		/// <summary>
+		/// Запуск ловли на фидер на комарином с обманками
+		/// </summary>
+		private void RunFiderKomarinoeMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Фидер Комариное Караси"));
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 20)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			else
+			{
+				Thread.Sleep(random.Next(30, 120) * 100);
+			}
+
+		}
+
+		/// <summary>
+		/// Запуск ловли на фидер на комарином с обманками
+		/// </summary>
+		private void RunFiderKomarinoeSPEEDMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Фидер Комариное Караси SPEED"));
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 20)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			else
+			{
+				Thread.Sleep(random.Next(30, 60) * 100);
+			}
+
+		}
+
+		/// <summary>
+		/// Запуск ловли на фидер на комарином с обманками
+		/// </summary>
+		private void RunFiderOstrogMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Фидер Острог Караси"));
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 20)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			else
+			{
+				Thread.Sleep(random.Next(30, 120) * 100);
+			}
+
+		}
+
+		private void RunFiderOstrogUgriMostMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Фидер Острог Угри Мост"));
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 10)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			else
+			{
+				Thread.Sleep(random.Next(30, 120) * 100);
+			}
+
+			Thread.Sleep(random.Next(1200, 2400) * 100);
+		}
+
+		private void RunKopatMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Копать"));
+			
+			int ver = random.Next(0, 100);
+			if (ver <= 10)
+			{
+				Macros inv = new Macros("МеждуКопками");
+				int ver2 = random.Next(1, 5);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('w', 0, 0, 20, 80, 10, 20);
+						break;
+					case 2:
+						inv.AddCommand('a', 0, 0, 20, 80, 10, 20);
+						break;
+					case 3:
+						inv.AddCommand('s', 0, 0, 20, 80, 10, 20);
+						break;
+					case 4:
+						inv.AddCommand('d', 0, 0, 20, 80, 10, 20);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+		}
+
+		private void RunSpiningBeloeMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Спининг Белая"));
+			int ver = random.Next(0, 100);
+			if (ver <= 10)
+			{
+				Macros inv = new Macros("Садок");
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			if (ver <= 20 && ver > 10)
+			{
+				Macros inv = new Macros("МеждуБроскамиХодить");
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('w', 0, 0, 12, 30, 10, 20);
+						break;
+					case 2:
+						inv.AddCommand('a', 0, 0, 10, 20, 10, 20);
+						break;
+					case 3:
+						inv.AddCommand('d', 0, 0, 10, 20, 10, 20);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+
 		}
 	}
 }

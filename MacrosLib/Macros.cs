@@ -33,6 +33,15 @@ namespace MacroFisher
 			Name = name;
 		}
 
+		public Macros(Macros macros)
+		{
+			Name = macros.Name;
+			foreach (Command com in macros)
+			{
+				AddCommand(com);
+			}
+		}
+
 		#endregion
 
 		#region Private methods

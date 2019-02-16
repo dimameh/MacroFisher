@@ -3,18 +3,18 @@ using System.Runtime.InteropServices;
 
 namespace MacroFisher
 {
-	public class Command
+	public class Command //TODO: переписать с наследованием отдельно для мыши, отдельно для клавиатуры
 	{
 		#region Constants
 
-		public const int MicroConvert = 1000;
+		public const int MicroConvert = 100;
 
 		#endregion
 
 		#region Private fields
 
-		private int _microsecondsPausedAfter;
-		private int _microsecondsPressed;
+		private int _secondsPausedAfter;
+		private int _secondsPressed;
 		private int _pressedRandomMin;
 		private int _pressedRandomMax;
 		private int _pauseRandomMin;
@@ -22,15 +22,17 @@ namespace MacroFisher
 
 		#endregion
 
-		#region Properties
+		#region Properties 
 
 		public int Id { get; set; }
 
 		public byte Key { get; }
+		
+		public string StrKey { get; }
 
-		public int MicrosecondsPressed
+		public int SecondsPressed
 		{
-			get => _microsecondsPressed;
+			get => _secondsPressed;
 			private set
 			{
 				if (value > 3600)
@@ -39,7 +41,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
 				}
 
-				_microsecondsPressed = value * MicroConvert;
+				_secondsPressed = value * MicroConvert;
 			}
 		}
 
@@ -103,9 +105,9 @@ namespace MacroFisher
 			}
 		}
 
-		public int MicrosecondsPausedAfter
+		public int SecondsPausedAfter
 		{
-			get => _microsecondsPausedAfter;
+			get => _secondsPausedAfter;
 			private set
 			{
 				if (value > 86400)
@@ -114,7 +116,7 @@ namespace MacroFisher
 						"Слишком долгое время нажатия. Максимальная длина нажатия: 86400 секунд (24 часа).");
 				}
 
-				_microsecondsPausedAfter = value * MicroConvert;
+				_secondsPausedAfter = value * MicroConvert;
 			}
 		}
 
@@ -139,8 +141,8 @@ namespace MacroFisher
 		public Command(char keyChar, int pressed, int paused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax, int id = 0)
 		{
 			Key = (byte)VkKeyScan(keyChar);
-			MicrosecondsPressed = pressed;
-			MicrosecondsPausedAfter = paused;
+			SecondsPressed = pressed;
+			SecondsPausedAfter = paused;
 			Id = id;
 
 			PressedRandomMin = pressRandMin;
@@ -155,8 +157,8 @@ namespace MacroFisher
 		public Command(byte keyChar, int pressed, int paused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax, int id = 0)
 		{
 			Key = keyChar;
-			MicrosecondsPressed = pressed;
-			MicrosecondsPausedAfter = paused;
+			SecondsPressed = pressed;
+			SecondsPausedAfter = paused;
 			Id = id;
 
 			PressedRandomMin = pressRandMin;
@@ -165,6 +167,21 @@ namespace MacroFisher
 			PauseRandomMax = pauseRandMax;
 		}
 
+		/// <summary>
+		/// Конструктор
+		/// </summary>
+		public Command(string keyString, int pressed, int paused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax, int id = 0)
+		{
+			StrKey = keyString;
+			SecondsPressed = pressed;
+			SecondsPausedAfter = paused;
+			Id = id;
+
+			PressedRandomMin = pressRandMin;
+			PressedRandomMax = pressRandMax;
+			PauseRandomMin = pauseRandMin;
+			PauseRandomMax = pauseRandMax;
+		}
 		#endregion
 	}
 }

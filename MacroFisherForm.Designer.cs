@@ -181,7 +181,7 @@
 			this.Controls.Add(this.StartButton);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MacroFisherForm";
-			this.Text = "Macro Fisher [0.1]";
+			this.Text = "Macro Fisher [0.2]";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MacroFisherForm_FormClosing);
 			this.Load += new System.EventHandler(this.MacroFisherForm_Load);
 			this.ResumeLayout(false);
