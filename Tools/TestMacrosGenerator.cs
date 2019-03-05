@@ -181,6 +181,37 @@ namespace MacroFisher
 					macros.AddCommand('p', 0, 0, 6, 10, 15, 30);
 					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
 					return macros;
+				case "Фидер Острог Караси FAST":
+					//вытаскиваем с первой
+					macros.AddCommand('1', 0, 0, 0, 0, 10, 16);
+					macros.AddCommand('p', 0, 0, 60, 80, 0, 0);
+					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
+					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
+					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					macros.AddCommand('p', 0, 0, 6, 15, 25, 35);
+					macros.AddCommand('p', 0, 0, 6, 10, 15, 30);
+					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
+
+					//вытаскиваем со второй
+					macros.AddCommand('2', 0, 20, 0, 0, 10, 16);
+					macros.AddCommand('p', 0, 0, 60, 80, 0, 0);
+					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
+					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
+					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					macros.AddCommand('p', 0, 0, 6, 15, 25, 35);
+					macros.AddCommand('p', 0, 0, 6, 10, 15, 30);
+					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
+
+					//вытаскиваем с третьей
+					macros.AddCommand('3', 0, 20, 0, 0, 10, 16);
+					macros.AddCommand('p', 0, 0, 60, 80, 0, 0);
+					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
+					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
+					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					macros.AddCommand('p', 0, 0, 6, 15, 25, 35);
+					macros.AddCommand('p', 0, 0, 6, 10, 15, 30);
+					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
+					return macros;
 				case "Спининг Белая":
 					//вытаскиваем с первой
 					macros.AddCommand('p', 0, 0, 14, 40, 15, 30);
@@ -188,6 +219,37 @@ namespace MacroFisher
 					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
 					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
 					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					return macros;
+				case "Фидер Белая Стерлядь":
+					//вытаскиваем с первой
+					macros.AddCommand('1', 0, 0, 0, 0, 10, 16);
+					macros.AddCommand('p', 0, 0, 280, 350, 0, 0);
+					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
+					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
+					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					macros.AddCommand('p', 0, 0, 30, 50, 60, 70);
+					macros.AddCommand('p', 0, 0, 3, 6, 15, 30);
+					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
+
+					//вытаскиваем со второй
+					macros.AddCommand('2', 0, 20, 0, 0, 10, 16);
+					macros.AddCommand('p', 0, 0, 280, 350, 0, 0);
+					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
+					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
+					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					macros.AddCommand('p', 0, 0, 30, 50, 60, 70);
+					macros.AddCommand('p', 0, 0, 3, 6, 15, 30);
+					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
+
+					//вытаскиваем с третьей
+					macros.AddCommand('3', 0, 20, 0, 0, 10, 16);
+					macros.AddCommand('p', 0, 0, 280, 350, 0, 0);
+					macros.AddCommand(' ', 0, 0, 0, 0, 2, 5);
+					macros.AddCommand('h', 0, 0, 40, 60, 15, 20);
+					macros.AddCommand(' ', 0, 0, 0, 0, 13, 16);
+					macros.AddCommand('p', 0, 0, 30, 50, 60, 70);
+					macros.AddCommand('p', 0, 0, 3, 6, 15, 30);
+					macros.AddCommand('0', 0, 0, 0, 0, 25, 35);
 					return macros;
 				case "Фидер Острог Угри Мост":
 					//вытаскиваем с первой
@@ -269,6 +331,9 @@ namespace MacroFisher
 					macros.AddCommand('a', 265, 0, 0, 0, 6, 16);
 					macros.AddCommand('s', 5, 0, 0, 0, 6, 16);
 					macros.AddCommand('a', 187, 0, 0, 0, 6, 16);
+					return macros;
+				case "LKM":
+					macros.AddCommand(0x01, 0, 0, 0, 0, 1, 1);
 					return macros;
 				default:
 					return macros;

@@ -83,10 +83,13 @@ namespace MacroFisher
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Комариное Караси"));
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Острог Караси"));
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Комариное Караси SPEED"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Острог Караси FAST"));
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Острог Угри Мост"));
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Спининг Белая"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("Фидер Белая Стерлядь"));
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Копать"));
 			_macrosList.Add(TestMacrosGenerator.GetMacros("Еда+Чай"));
+			_macrosList.Add(TestMacrosGenerator.GetMacros("LKM"));
 			RefreshListBox();
 		}
 
@@ -456,7 +459,7 @@ namespace MacroFisher
 					if (command.SecondsPressed == 0)
 					{
 						AutoItX.MouseClick("LEFT");
-						Thread.Sleep(command.SecondsPausedAfter);
+						Thread.Sleep(command.SecondsPausedAfter/100);
 						Thread.Sleep(random.Next(command.PauseRandomMin,
 							command.PauseRandomMax + 1));
 					}
@@ -543,7 +546,6 @@ namespace MacroFisher
 				}
 				return;
 			}
-
 			if (macros.Name == "Спининг Белая")
 			{
 				for (int i = 0; i < X; i++)
@@ -553,7 +555,6 @@ namespace MacroFisher
 
 				return;
 			}
-
 			if (macros.Name == "Фидер Острог Угри Мост")
 			{
 				for (int i = 0; i < X; i++)
@@ -563,7 +564,6 @@ namespace MacroFisher
 
 				return;
 			}
-
 			if (macros.Name == "Фидер Комариное Караси SPEED")
 			{
 				for (int i = 0; i < X; i++)
@@ -573,13 +573,29 @@ namespace MacroFisher
 
 				return;
 			}
+			if (macros.Name == "Фидер Белая Стерлядь")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunFiderBelayaSterlyadMacros();
+				}
 
+				return;
+			}
+			if(macros.Name == "Фидер Острог Караси FAST")
+			{
+				for (int i = 0; i < X; i++)
+				{
+					RunFiderOstrogSPEEDMacros();
+				}
+
+				return;
+			}
 			for (int i = 0; i < X; i++)
 			{
 				RunMacros(macros);
 			}
 		}
-
 
 		/// <summary>
 		/// Валидация чисел
@@ -631,7 +647,6 @@ namespace MacroFisher
 
 			RepeatMacrosXTimes(_currentMacros, _timesToRepeat);
 		}
-
 
 		/// <summary>
 		/// Запуск ловли на фидер на комарином с обманками
@@ -741,12 +756,79 @@ namespace MacroFisher
 
 		}
 
+		private void RunFiderOstrogSPEEDMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Фидер Острог Караси FAST"));
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 20)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 70);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 70);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 70);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			else
+			{
+				Thread.Sleep(random.Next(30, 50) * 100);
+			}
+
+		}
+		
 		private void RunFiderOstrogUgriMostMacros()
 		{
 			RunMacros(TestMacrosGenerator.GetMacros("Фидер Острог Угри Мост"));
 			Macros inv = new Macros("Садок");
 			int ver = random.Next(0, 100);
 			if (ver <= 10)
+			{
+				int ver2 = random.Next(1, 4);
+				switch (ver2)
+				{
+					case 1:
+						inv.AddCommand('i', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('i', 0, 0, 3, 7, 5, 10);
+						break;
+					case 2:
+						inv.AddCommand('o', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('o', 0, 0, 3, 7, 5, 10);
+						break;
+					case 3:
+						inv.AddCommand('c', 0, 0, 3, 7, 50, 100);
+						inv.AddCommand('c', 0, 0, 3, 7, 5, 10);
+						break;
+				}
+
+				RunMacros(inv);
+			}
+			else
+			{
+				Thread.Sleep(random.Next(30, 120) * 100);
+			}
+
+			Thread.Sleep(random.Next(1200, 2400) * 100);
+		}
+
+		private void RunFiderBelayaSterlyadMacros()
+		{
+			RunMacros(TestMacrosGenerator.GetMacros("Фидер Белая Стерлядь"));
+			Macros inv = new Macros("Садок");
+			int ver = random.Next(0, 100);
+			if (ver <= 20)
 			{
 				int ver2 = random.Next(1, 4);
 				switch (ver2)
