@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using AutoIt;
 using MacroFisher.Tools;
 using System.Windows.Media.Media3D;
+using MacroFisher.MacrosLib;
 
 namespace MacroFisher
 {
@@ -183,7 +184,7 @@ namespace MacroFisher
 			}
 			_secondsBeforeStart = string.IsNullOrWhiteSpace(startSecTextBox.Text) ? 0 : int.Parse(startSecTextBox.Text);
 
-			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert * 10);
+			Thread.Sleep(_secondsBeforeStart * Command._microConvert * 10);
 
 			switch (_currentMacros.Name)
 			{
@@ -643,7 +644,7 @@ namespace MacroFisher
 				_timesToRepeat = int.Parse(NTextBox.Text);
 			}
 
-			Thread.Sleep(_secondsBeforeStart * Command.MicroConvert*10);
+			Thread.Sleep(_secondsBeforeStart * Command._microConvert*10);
 
 			RepeatMacrosXTimes(_currentMacros, _timesToRepeat);
 		}

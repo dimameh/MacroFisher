@@ -1,187 +1,57 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace MacroFisher
+﻿namespace MacroFisher.MacrosLib
 {
-	public class Command //TODO: переписать с наследованием отдельно для мыши, отдельно для клавиатуры
-	{
-		#region Constants
+    public abstract class Command : IMacrosNode
+    {
+        #region Constants
 
-		public const int MicroConvert = 100;
+        protected const int _microConvert = 1000;
 
-		#endregion
+        #endregion
 
-		#region Private fields
+        #region Ordinary fields
 
-		private int _secondsPausedAfter;
-		private int _secondsPressed;
-		private int _pressedRandomMin;
-		private int _pressedRandomMax;
-		private int _pauseRandomMin;
-		private int _pauseRandomMax;
+        protected double _holdMax;
 
-		#endregion
+        protected double _holdMin;
 
-		#region Properties 
+        protected double _pauseMax;
 
-		public int Id { get; set; }
+        protected double _pauseMin;
 
-		public byte Key { get; }
-		
-		public string StrKey { get; }
+        #endregion
 
-		public int SecondsPressed
-		{
-			get => _secondsPressed;
-			private set
-			{
-				if (value > 3600)
-				{
-					throw new ArgumentOutOfRangeException(
-						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
-				}
+        #region Properties
 
-				_secondsPressed = value * MicroConvert;
-			}
-		}
+        public string Key { get; }
 
-		public int PressedRandomMin
-		{
-			get => _pressedRandomMin;
-			private set
-			{
-				if (value > 3600)
-				{
-					throw new ArgumentOutOfRangeException(
-						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
-				}
+        #endregion
 
-				_pressedRandomMin = value * MicroConvert;
-			}
-		}
+        #region Constructor
 
-		public int PressedRandomMax
-		{
-			get => _pressedRandomMax;
-			private set
-			{
-				if (value > 3600)
-				{
-					throw new ArgumentOutOfRangeException(
-						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
-				}
+        /// <summary>
+        ///     Конструктор
+        /// </summary>
+        /// <param name="key"> Название клавиши </param>
+        protected Command(string key)
+        {
+            Key = key;
+        }
 
-				_pressedRandomMax = value * MicroConvert;
-			}
-		}
+        #endregion
 
-		public int PauseRandomMin
-		{
-			get => _pauseRandomMin;
-			private set
-			{
-				if (value > 3600)
-				{
-					throw new ArgumentOutOfRangeException(
-						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
-				}
+        #region Public methods
 
-				_pauseRandomMin = value * MicroConvert;
-			}
-		}
+        #region Implementation of IMacrosNode
 
-		public int PauseRandomMax
-		{
-			get => _pauseRandomMax;
-			private set
-			{
-				if (value > 3600)
-				{
-					throw new ArgumentOutOfRangeException(
-						"Слишком долгое время нажатия. Максимальная длина нажатия: 3600 секунд (1 час).");
-				}
+        public abstract int Id { get; set; }
 
-				_pauseRandomMax = value * MicroConvert;
-			}
-		}
+        /// <summary>
+        ///     Выполнить команду
+        /// </summary>
+        public abstract void RunNode();
 
-		public int SecondsPausedAfter
-		{
-			get => _secondsPausedAfter;
-			private set
-			{
-				if (value > 86400)
-				{
-					throw new ArgumentOutOfRangeException(
-						"Слишком долгое время нажатия. Максимальная длина нажатия: 86400 секунд (24 часа).");
-				}
+        #endregion
 
-				_secondsPausedAfter = value * MicroConvert;
-			}
-		}
-
-		#endregion
-
-		#region Constructor
-
-		/// <summary>
-		/// Перевод символа в кейкод
-		/// </summary>
-		/// <param name="ch">символ</param>
-		/// <returns></returns>
-		[DllImport("user32.dll")] static extern short VkKeyScan(char ch);
-
-		/// <summary>
-		///     Конструктор
-		/// </summary>
-		/// <param name="keyChar">Символ</param>
-		/// <param name="pressed">Сколько секунд нажимать на него</param>
-		/// <param name="paused">Сколько секунд после этого ничего не делать</param>
-		/// <param name="id">ID макроса в списке для поиска</param>
-		public Command(char keyChar, int pressed, int paused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax, int id = 0)
-		{
-			Key = (byte)VkKeyScan(keyChar);
-			SecondsPressed = pressed;
-			SecondsPausedAfter = paused;
-			Id = id;
-
-			PressedRandomMin = pressRandMin;
-			PressedRandomMax = pressRandMax;
-			PauseRandomMin = pauseRandMin;
-			PauseRandomMax = pauseRandMax;
-		}
-
-		/// <summary>
-		/// Конструктор
-		/// </summary>
-		public Command(byte keyChar, int pressed, int paused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax, int id = 0)
-		{
-			Key = keyChar;
-			SecondsPressed = pressed;
-			SecondsPausedAfter = paused;
-			Id = id;
-
-			PressedRandomMin = pressRandMin;
-			PressedRandomMax = pressRandMax;
-			PauseRandomMin = pauseRandMin;
-			PauseRandomMax = pauseRandMax;
-		}
-
-		/// <summary>
-		/// Конструктор
-		/// </summary>
-		public Command(string keyString, int pressed, int paused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax, int id = 0)
-		{
-			StrKey = keyString;
-			SecondsPressed = pressed;
-			SecondsPausedAfter = paused;
-			Id = id;
-
-			PressedRandomMin = pressRandMin;
-			PressedRandomMax = pressRandMax;
-			PauseRandomMin = pauseRandMin;
-			PauseRandomMax = pauseRandMax;
-		}
-		#endregion
-	}
+        #endregion
+    }
 }

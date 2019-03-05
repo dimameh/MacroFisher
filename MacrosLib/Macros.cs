@@ -2,131 +2,150 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MacroFisher
+namespace MacroFisher.MacrosLib
 {
-	public class Macros : IEnumerable
-	{
-		#region Readonly fields
+    public class Macros : IEnumerable, IMacrosNode
+    {
+        #region Readonly fields
 
-		/// <summary>
-		///     Список команд макроса
-		/// </summary>
-		private readonly List<Command> _macrosList = new List<Command>();
+        /// <summary>
+        ///     Список команд макроса
+        /// </summary>
+        private readonly List<IMacrosNode> _macrosNodeList = new List<IMacrosNode>();
 
-		#endregion
+        #endregion
 
-		#region Properties
+        #region Properties
 
-		/// <summary>
-		///     Название макроса
-		/// </summary>
-		public string Name { get; set; }
+        /// <summary>
+        ///     Название макроса
+        /// </summary>
+        public string Name { get; set; }
 
-		public bool IsEmpty => _macrosList.Count == 0;
+        /// <summary>
+        ///     Возвращает true если хранимый список пустой
+        /// </summary>
+        public bool IsEmpty => _macrosNodeList.Count == 0;
 
-		#endregion
+        #endregion
 
-		#region Constructor
+        #region Constructor
 
-		public Macros(string name)
-		{
-			Name = name;
-		}
+        /// <summary>
+        ///     Конструктор
+        /// </summary>
+        /// <param name="name"></param>
+        public Macros(string name)
+        {
+            Name = name;
+        }
 
-		public Macros(Macros macros)
-		{
-			Name = macros.Name;
-			foreach (Command com in macros)
-			{
-				AddCommand(com);
-			}
-		}
+        /// <summary>
+        ///     Конструктор копирования
+        /// </summary>
+        /// <param name="macros"></param>
+        public Macros(Macros macros)
+        {
+            Name = macros.Name;
+            foreach (IMacrosNode com in macros)
+            {
+                AddCommand(com);
+            }
+        }
 
-		#endregion
+        #endregion
 
-		#region Private methods
+        #region Private methods
 
-		private int GenerateId()
-		{
-			bool isIdFree;
+        /// <summary>
+        ///     Генерация id для элементов списка
+        /// </summary>
+        /// <returns></returns>
+        private int GenerateId()
+        {
+            for (var i = 0; i < _macrosNodeList.Capacity + 1; i++)
+            {
+                var isIdFree = true;
+                foreach (var macros in _macrosNodeList)
+                {
+                    if (i == macros.Id)
+                    {
+                        isIdFree = false;
+                        break;
+                    }
+                }
 
-			for (var i = 0; i < _macrosList.Capacity + 1; i++)
-			{
-				isIdFree = true;
-				foreach (var macros in _macrosList)
-				{
-					if (i == macros.Id)
-					{
-						isIdFree = false;
-						break;
-					}
-				}
+                if (isIdFree)
+                {
+                    return i;
+                }
+            }
 
-				if (isIdFree)
-				{
-					return i;
-				}
-			}
+            throw new Exception("Ошибка в генерации ID для макроса. Нет свободных ID");
+        }
 
-			throw new Exception("Ошибка в генерации ID для макроса. Нет свободных ID");
-		}
+        #endregion
 
-		#endregion
+        #region Public methods
 
-		#region Public methods
+        /// <summary>
+        ///     Добавить команду
+        /// </summary>
+        public void AddCommand(IMacrosNode command)
+        {
+            command.Id = GenerateId();
+            _macrosNodeList.Add(command);
+        }
 
-		/// <summary>
-		///     Добавить макрос
-		/// </summary>
-		/// <param name="keyChar">Символ</param>
-		/// <param name="secondsPressed">Сколько секунд нажимать на него</param>
-		/// <param name="secondsPaused">Сколько секунд после этого ничего не делать</param>
-		/// <param name="pressType">Тип нажатия (Hold/Press)</param>
-		public void AddCommand(char keyChar, int secondsPressed, int secondsPaused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax)
-		{
-			_macrosList.Add(new Command(keyChar, secondsPressed, secondsPaused, pressRandMin, pressRandMax, pauseRandMin, pauseRandMax, GenerateId()));
-		}
+        /// <summary>
+        ///     Удалить макрос
+        /// </summary>
+        /// <param name="id">id макроса</param>
+        public void RemoveCommand(int id)
+        {
+            foreach (var macros in _macrosNodeList)
+            {
+                if (macros.Id == id)
+                {
+                    _macrosNodeList.Remove(macros);
+                }
+            }
+        }
 
-		public void AddCommand(byte keyChar, int secondsPressed, int secondsPaused, int pressRandMin, int pressRandMax, int pauseRandMin, int pauseRandMax)
-		{
-			_macrosList.Add(new Command(keyChar, secondsPressed, secondsPaused, pressRandMin, pressRandMax, pauseRandMin, pauseRandMax, GenerateId()));
-		}
+        public void RemoveAt(int index)
+        {
+            _macrosNodeList.RemoveAt(index);
+        }
 
-		public void AddCommand(Command command)
-		{
-			command.Id = GenerateId();
-			_macrosList.Add(command);
-		}
+        #region Implementation of IEnumerable
 
-		/// <summary>
-		///     Удалить макрос
-		/// </summary>
-		/// <param name="id">id макроса</param>
-		public void RemoveCommand(int id)
-		{
-			foreach (var macros in _macrosList)
-			{
-				if (macros.Id == id)
-				{
-					_macrosList.Remove(macros);
-				}
-			}
-		}
+        public IEnumerator GetEnumerator()
+        {
+            return _macrosNodeList.GetEnumerator();
+        }
 
-		public void RemoveAt(int index)
-		{
-			_macrosList.RemoveAt(index);
-		}
+        #endregion
 
-		#region Implementation of IEnumerable
+        #endregion
 
-		public IEnumerator GetEnumerator()
-		{
-			return _macrosList.GetEnumerator();
-		}
+        #region Implementation of IMacrosNode
 
-		#endregion
+        /// <summary>
+        ///     Id макроса
+        /// </summary>
+        public int Id { get; set; } = 0;
 
-		#endregion
-	}
+        /// <summary>
+        ///     Запуск всех элементов макроса
+        /// </summary>
+        public void RunNode()
+        {
+            foreach (var macrosNode in _macrosNodeList)
+            {
+                macrosNode.RunNode();
+            }
+        }
+
+        #endregion
+    }
 }

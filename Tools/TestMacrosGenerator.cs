@@ -1,6 +1,6 @@
-﻿using System.ComponentModel;
+﻿using MacroFisher.MacrosLib;
 
-namespace MacroFisher
+namespace MacroFisher.Tools
 {
 	public static class TestMacrosGenerator
 	{
